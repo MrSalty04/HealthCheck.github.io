@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการใช้งาน - HealthCheck</title>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .history-list {
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ประวัติการใช้งาน</h1>
+        <div id="historyList" class="history-list">
+            <p>กำลังโหลดข้อมูล...</p>
+        </div>
+        <button class="btn" onclick="logout()">ออกจากระบบ</button>
+    </div>
+    <script>
+        function loadHistory() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('กรุณาเข้าสู่ระบบ');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const email = currentUser.email;
+            const history = JSON.parse(localStorage.getItem(`history_${email}`) || '[]');
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<p>ไม่มีประวัติการใช้งาน</p>';
+                return;
+            }
+            
+            history.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `<strong>${entry.date}</strong><br>${entry.details}`;
+                historyList.appendChild(div);
+            });
+        }
+        
+        function logout() {
+            localStorage.removeItem('currentUser');
+            alert('ออกจากระบบสำเร็จ');
+            window.location.href = 'login.html';
+        }
+        
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>
